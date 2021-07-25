@@ -57,8 +57,8 @@ h.close()                   ; close hash obj
 ; ========================================================================
 class hash {
     __New(buf:="", hashType:="SHA256", encoding:="UTF-16") {
-        this.item := buf
         this.encoding := encoding
+        this.item := buf
         
         this.hLib := DllCall("LoadLibrary","Str","bcrypt.dll","UPtr")
         r1 := DllCall("bcrypt\BCryptOpenAlgorithmProvider","UPtr*",&hAlg:=0     ; *phAlgorithm
