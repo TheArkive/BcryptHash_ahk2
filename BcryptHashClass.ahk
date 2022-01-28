@@ -15,9 +15,10 @@ h := hash()                 ; init hash obj
 values := ["AutoHotkey_2.0-a138-7538f26f.zip","1234","abcd"]
 For i, val in values        ; Iterate through your list and hash
     final_txt .= (final_txt?"`r`n==============================================`r`n":"") "Item: " val "`n`n" h.go(val)
-h.close()                   ; close hash obj
 
-Msgbox final_txt
+grace := h.close() ; close hash obj
+h := ""
+Msgbox final_txt "`n`nGraceful Exit: " grace
 
 ; ========================================================================
 ; Supported hash types:  MD2, MD4, MD5, SHA1, SHA256, SHA384, SHA512
@@ -85,18 +86,7 @@ class hash {
         (buf) ? val := this.go() : "" ; automatically hash the specified item
     }
     __Delete() { ; Gracefully exit, in case the object is terminated before user does close()
-        If this.hHash {
-            If DllCall("bcrypt\BCryptDestroyHash","UPtr",this.hHash)
-                throw Error("Unable to destroy hash object.")
-        }
-        
-        If this.hAlg {
-            If DllCall("bcrypt\BCryptCloseAlgorithmProvider","UPtr",this.hAlg,"UInt",0)
-                throw Error("Unable to close Algorithm Provider.")
-        }
-        
-        this.haDig := "", this.haObj := "" ; free buffers & clear data
-        this.hHash := 0, this.hashSize := 0, this.value := "", this.item := "", this.hAlg := 0
+        this.close()
     }
     go(newItem := "") {
         (newItem) ? (this.item := newItem) : ""
@@ -128,9 +118,9 @@ class hash {
         get => this.buf
     }
     close() {
-        If DllCall("bcrypt\BCryptDestroyHash","UPtr",this.hHash)
+        If this.hHash && DllCall("bcrypt\BCryptDestroyHash","UPtr",this.hHash)
             throw Error("Unable to destroy hash object.")
-        If DllCall("bcrypt\BCryptCloseAlgorithmProvider","UPtr",this.hAlg,"UInt",0)
+        If this.hAlg && DllCall("bcrypt\BCryptCloseAlgorithmProvider","UPtr",this.hAlg,"UInt",0)
             throw Error("Unable to close Algorithm Provider.")
         this.haDig := "", this.haObj := "" ; free buffers & clear data
         this.hHash := 0, this.hashSize := 0, this.value := "", this.item := "", this.hAlg := 0

@@ -71,8 +71,7 @@ hash(buf:="", hType:="SHA256", enc:="UTF-16") {
     
     If (buf && hType) { ; init obj that performs hashing
         If ((hType != _hType) && hType) ; if hashType changes, release old objects
-            graceful_exit(), hashObj := 0, hHash := 0, hashSize := 0, hAlg := 0
-          , _hType := hType ; update hash type if changed
+            graceful_exit(), hashObj := hHash := hashSize := hAlg := 0, _hType := hType
         
         r1 := DllCall("bcrypt\BCryptOpenAlgorithmProvider","UPtr*",&hAlg:=0     ; *phAlgorithm
                                                           ,"Str",_hType         ; pszAlgId
