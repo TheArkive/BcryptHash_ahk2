@@ -8,7 +8,9 @@
 ; automatically when changing specified hashType.
 
 item := "AutoHotkey_2.0-a138-7538f26f.zip"
-msgbox "Item: " item "`n`n" hash(item,"SHA256") ; SHA256 is the default and can be omitted.
+verify := FileRead("AutoHotkey_2.0-a138-7538f26f.zip.sha256") ; this is the hash specified in the text file
+result := hash(item,"SHA256") ; SHA256 is the default and can be omitted.
+msgbox "Item: " item "`n`n" result "`n`nMatch: " ((result=verify)?"true":"falsh") 
 
 ; ========================================================
 ; Example: Fast hashing of multiple values
@@ -19,11 +21,14 @@ msgbox "Item: " item "`n`n" hash(item,"SHA256") ; SHA256 is the default and can 
 ;          a graceful releasing of hash objects.
 ; ========================================================
 
-MsgBox "Next hashing"
+final_txt:=""
+
 the_list := ["AutoHotkey_2.0-a138-7538f26f.zip","1234","abcd"] ; List contains a file, and 2 strings
+
 For i, val in the_list                          ; Iterate through the list.
-    msgbox "Item: " val "`n`n" hash(val,"SHA1") ; Perform hashing.
-Msgbox "Graceful exit: " hash()                 ; Release hash objects and buffers.
+    final_txt .= (final_txt?"`r`n================================`r`n":"") "Item: " val "`n`n" hash(val,"SHA1") ; Perform hashing.
+
+Msgbox final_txt "`r`n`r`nGraceful exit: " hash() ; Release hash objects and buffers.
 
 ; ========================================================
 ; This function automatically leaves hash objects active

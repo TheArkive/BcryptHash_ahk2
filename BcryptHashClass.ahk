@@ -2,19 +2,22 @@
 ; Example: fast one-line hash return
 ; ========================================================
 item := "AutoHotkey_2.0-a138-7538f26f.zip"
-msgbox "Item: " item "`n`n" hash(item).value ; SHA256 is the default and can be omitted.
+verify := FileRead("AutoHotkey_2.0-a138-7538f26f.zip.sha256") ; this is the hash specified in the text file
+result := hash(item).value
+msgbox "Item: " item "`n`n" result "`n`nMatach: " ((result=verify)?"true":"false") ; SHA256 is the default and can be omitted.
 
 ; ========================================================
 ; Example: fast hashing of multiple values
 ;    NOTE: Must use same hash type when doing this.
 ; ========================================================
+final_txt := ""
 h := hash()                 ; init hash obj
 values := ["AutoHotkey_2.0-a138-7538f26f.zip","1234","abcd"]
 For i, val in values        ; Iterate through your list and hash
-    msgbox "Item: " val "`n`n" h.go(val)
+    final_txt .= (final_txt?"`r`n==============================================`r`n":"") "Item: " val "`n`n" h.go(val)
 h.close()                   ; close hash obj
 
-
+Msgbox final_txt
 
 ; ========================================================================
 ; Supported hash types:  MD2, MD4, MD5, SHA1, SHA256, SHA384, SHA512
