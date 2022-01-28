@@ -106,14 +106,12 @@ class hash {
     }
     item {
         set {
-            buf := value
             If (Type(value) = "String" && FileExist(value))
-                buf := FileRead(value,"RAW")
-            Else If (Type(value) = "String") && (value != "")
-                buf := Buffer(StrPut(value,this.encoding),0)
-              , StrPut(value, buf, this.encoding)
-            Else buf := ""
-            this.buf := buf
+                this.buf := FileRead(value,"RAW")
+            Else If (Type(value) = "String") && (value != "") {
+                this.buf := Buffer(StrPut(value,this.encoding),0)
+                StrPut(value, this.buf, this.encoding)
+            } Else this.buf := ""
         }
         get => this.buf
     }
