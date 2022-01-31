@@ -2,7 +2,7 @@
 
 Perform hashing of MD2, MD4, MD5, SHA1, SHA256, SHA384, or SHA512.
 
-Input is dynamically detected as a file or string.
+Input is dynamically detected as a file, string, or buffer.
 
 Previous item is remembered, and previously specified hash is also remembered.
 

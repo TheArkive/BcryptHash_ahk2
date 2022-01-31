@@ -48,20 +48,20 @@ Msgbox final_txt "`r`n`r`nGraceful exit: " hash() ; Release hash objects and buf
 ;           hashType = MD2/MD4/MD5/SHA1/SHA256/SHA384/SHA512
 ;           enc      = pick your encoding, only affects 'text', this has no effect when hashing a file
 ; ================================================================================================================
-hash(item:="", hType:="", enc:="") {
+hash(item:="", hashType:="", enc:="") { ; default hashType = SHA256 /// default enc = UTF-16
     Static _hLib := DllCall("LoadLibrary","Str","bcrypt.dll","UPtr"), LType := "SHA256"
     Static ob := {obj:"", hHash:0, hAlg:0}, close1 := "bcrypt\BCryptDestroyHash", close2 := "bcrypt\BCryptCloseAlgorithmProvider"
          , o_reset := {md2:ob, md4:ob, md5:ob, sha1:ob, sha256:ob, sha384:ob, sha512:ob}, o := o_reset, LBuf := ""
-    LType := (hType ? StrUpper(hType) : LType) ; last type
+    LType := (hashType ? StrUpper(hashType) : LType) ; last type
     
-    If (!item && !hType) { ; Free buffers/memory and release objects.
+    If (!item && !hashType) { ; Free buffers/memory and release objects.
         return !graceful_exit()
     } Else If (Type(item) = "String" && FileExist(item)) { ; Determine buffer type.
         LBuf := FileRead(item,"RAW")
     } Else If (Type(item) = "String") {
         LBuf := Buffer(StrPut(item,_enc := (enc?enc:"UTF-16")), 0)
         StrPut(item, LBuf, _enc)
-    }
+    } Else LBuf := item
     
     (!o.%LType%.hAlg) ? make_obj() : "" ; init obj that performs hashing
     
@@ -99,7 +99,7 @@ hash(item:="", hType:="", enc:="") {
 }
 
 
-dbg(_in) { ; AHK v2
-    Loop Parse _in, "`n", "`r"
-        OutputDebug "AHK: " A_LoopField
-}
+; dbg(_in) { ; AHK v2
+    ; Loop Parse _in, "`n", "`r"
+        ; OutputDebug "AHK: " A_LoopField
+; }
