@@ -59,15 +59,15 @@ hash(item:="", hashType:="", enc:="") { ; default hashType = SHA256 /// default 
     } Else If (Type(item) = "String" && FileExist(item)) { ; Determine buffer type.
         LBuf := FileRead(item,"RAW")
     } Else If (Type(item) = "String") {
-        LBuf := Buffer(StrPut(item,_enc := (enc?enc:"UTF-16")), 0)
-        StrPut(item, LBuf, _enc)
+        LBuf := Buffer(StrPut(item,"UTF-8")), 0)
+        StrPut(item, LBuf, "UTF-8")
     } Else LBuf := item
     
     (!o.%LType%.hAlg) ? make_obj() : "" ; init obj that performs hashing
     
     If (LBuf && !(outVal:="")) {
         hDigest := Buffer(o.%LType%.size) ; Create new digest obj, and perform hashing on buf.
-        r7 := DllCall("bcrypt\BCryptHashData","UPtr",o.%LType%.obj.ptr,"UPtr",LBuf.ptr,"UInt",LBuf.size,"UInt",0)
+        r7 := DllCall("bcrypt\BCryptHashData","UPtr",o.%LType%.obj.ptr,"UPtr",LBuf.ptr,"UInt",LBuf.size-1,"UInt",0)
         r8 := DllCall("bcrypt\BCryptFinishHash","UPtr",o.%LType%.obj.ptr,"UPtr",hDigest.ptr,"UInt",hDigest.size,"UInt",0)
         Loop hDigest.size ; convert hDigest to hex string
             outVal .= Format("{:02X}",NumGet(hDigest,A_Index-1,"UChar"))
