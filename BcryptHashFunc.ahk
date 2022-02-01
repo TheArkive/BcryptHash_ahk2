@@ -132,7 +132,7 @@ hash(&item:="", hashType:="", c_size:="", cb:="") { ; default hashType = SHA256 
 }
 
 
-dbg(_in) { ; AHK v2
-    Loop Parse _in, "`n", "`r"
-        OutputDebug "AHK: " A_LoopField
-}
+; dbg(_in) { ; AHK v2
+    ; Loop Parse _in, "`n", "`r"
+        ; OutputDebug "AHK: " A_LoopField
+; }
