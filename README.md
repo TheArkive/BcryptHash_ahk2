@@ -11,7 +11,6 @@ Thanks to jNizM and his [CNG lib](https://www.autohotkey.com/boards/viewtopic.ph
 Please see the inlcuded examples.
 
 ```
-; ================================================================================================================
 ; This function automatically remembers the last hash algorithm and last item hashed (in any combo).
 ;
 ; To gracefully free all hash objects, and the most recent item from memory, just call this func with
@@ -28,5 +27,4 @@ Please see the inlcuded examples.
 ;       c_size   = Chunk size, applies to files only, in bytes.
 ;                  Change the value of d_LSize below to set your desired default chunk size.
 ;       cb       = Callback must accept one param, the percent complete as a float.
-; ================================================================================================================
 ```
