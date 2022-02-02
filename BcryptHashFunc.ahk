@@ -38,7 +38,7 @@ verify := FileRead("AutoHotkey_2.0-a138-7538f26f.zip.sha256") ; this is the hash
 callback(prog) {
     Global g
     g["Prog"].Value := Round(prog*100)
-    dbg("progress: " prog)
+    ; dbg("progress: " prog)
 }
 
 g := Gui("-MinimizeBox -MaximizeBox")
@@ -77,8 +77,9 @@ g["Match"].Text := "Match: " ((r=verify)?"true":"false")
 ; ================================================================================================================
 hash(&item:="", hashType:="", c_size:="", cb:="") { ; default hashType = SHA256 /// default enc = UTF-16
     Static _hLib:=DllCall("LoadLibrary","Str","bcrypt.dll","UPtr"), LType:="SHA256", LItem:="", LBuf:="", LSize:="", d_LSize:=1024000
-    Static ob := {obj:"",hHash:0,hAlg:0}, o_reset := {md2:ob,md4:ob,md5:ob,sha1:ob,sha256:ob,sha384:ob,sha512:ob}, o:=o_reset
-    LType := (hashType?StrUpper(hashType):LType), LItem:=(item?item:LItem), _file:="", ((!o.%LType%.hAlg)?make_obj():"")
+    Static n:={hAlg:0,hHash:0,size:0,obj:""}
+         , o := {md2:n.Clone(),md4:n.Clone(),md5:n.Clone(),sha1:n.Clone(),sha256:n.Clone(),sha384:n.Clone(),sha512:n.Clone()}
+    _file:="", LType:=(hashType?StrUpper(hashType):LType), LItem:=(item?item:LItem), ((!o.%LType%.hAlg)?make_obj():"")
     
     If (!item && !hashType) { ; Free buffers/memory and release objects.
         return !graceful_exit()
@@ -124,8 +125,8 @@ hash(&item:="", hashType:="", c_size:="", cb:="") { ; default hashType = SHA256 
             If o.%name%.hHash && (r1 := DllCall("bcrypt\BCryptDestroyHash","UPtr",o.%name%.hHash)
                               ||  r2 := DllCall("bcrypt\BCryptCloseAlgorithmProvider","UPtr",o.%name%.hAlg,"UInt",0))
                 throw Error("Unable to destroy hash object.")
-            o.%name%.hHash := o.%name%.hAlg := o.%name%.obj := ""
-        } o := o_reset, LBuf := "", LItem := "", LSize := c_size
+            o.%name%.hHash := o.%name%.hAlg := o.%name%.size := 0, o.%name%.obj := ""
+        } LBuf := "", LItem := "", LSize := c_size
     }
     
     copy_str() => DllCall("NtDll\RtlCopyMemory","UPtr",LBuf.ptr,"UPtr",temp_buf.ptr,"UPtr",LBuf.size)
