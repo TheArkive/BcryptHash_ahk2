@@ -101,7 +101,7 @@ hash(&item:="", hashType:="", c_size:="", cb:="") { ; default hashType = SHA256 
             outVal .= Format("{:02X}",NumGet(hDigest,A_Index-1,"UChar"))
     }
     
-    _file?_file.Close():""
+    _file?(_file.Close(),LBuf:=""):""
     return outVal
     
     make_obj() { ; create hash object
